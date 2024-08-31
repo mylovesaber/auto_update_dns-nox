@@ -1,0 +1,64 @@
+# 如果member列表为空，则视为该组的enable值为0或no
+# group: 分组
+group:
+  group-name1:
+    enable: 1
+    member:
+      - name1-a
+      - name1-b
+      - name1-c
+      - name1-d
+      - name1-e
+  group-name2:
+    enable: 0
+    member:
+      - name2-a
+      - name2-b
+      - name2-c
+  group-name3:
+    enable: 1
+    member:
+      - name3-a
+      - name3-b
+      - name3-c
+  exclude:
+    member:
+    - name1-d
+    - name1-e
+    - name2-b
+
+
+common:
+  log: /path/to/
+  service-base-path: /all/the/jar/files/with/the/same/path/
+  java-home: java
+  retry:
+    gap-second: 5
+    retry-time: 3
+# work-path是java内置的获取当前路径的方式，比如File file=new File("test.txt")；
+# 实际应用是在执行jar包前先cd到该路径下。
+
+
+# 如果 main-path 为空则强制上面指定的服务的 jar 包路径必须是绝对路径，
+# 否则实际jar包路径就是 main-path 和 file-path 的拼接，例：
+# base-gateway的jar包路径是：/all/the/jar/files/with/the/same/path/path/to/file1.jar
+
+# java-home必须指定，若不知道JAVA_HOME真实路径，但命令行运行java命令的确可以执行，那么此处直接填写java字样，此方式适用于通过安装包安装的java
+# 如果要指定java版本，则填写对应JAVA_HOME真实的绝对路径
+
+# retry是终止进程失败或超时未结束的重试流程配置，终止方式是简单的 kill -9 pid
+# gap-second是执行一组kill命令后，直到检测进程是否停止的操作期间的时间间隔（秒）
+# retry-time是重试次数，超过这次数则以警告输出，但不会影响到后续其他服务的启停
+
+service:
+  base-gateway:
+    jar-path: /path/to/file1.jar
+    java-args:
+      - -Dnacos-server=1.1.1.1
+      - -Xms256m
+  base-auth:
+    jar-path: /path/to/file2.jar
+    java-args:
+      - Dnacos-server=2.2.2.2
+      - Xms256m
+
