@@ -6,6 +6,7 @@ proxyIP=
 buildEntryFilePath=
 buildFolderPath=
 
+latestNotify=
 tomcatVer=
 tomcatVersionNum=
 tomcatAmount=
@@ -312,6 +313,7 @@ ParseConfig(){
             formatError "tomcat大版本号必须为纯数字，退出中"
             exit 1
         fi
+        latestNotify="(官网最新版)"
         if [[ "${tomcatVersionNum}" -lt 10 ]]; then
             local webNum firstFilter
             webNum="${tomcatVersionNum}0"
@@ -792,7 +794,7 @@ CheckParse(){
 工作模式: ${TAN}${offlineModeInfo}${NORM}
 " | column -t
     echo -e "${CYAN}
-tomcat版本号: ${TAN}${tomcatVer}${CYAN}
+tomcat版本号: ${TAN}${tomcatVer}${latestNotify}${CYAN}
 tomcat系列版本号: ${TAN}${tomcatVersionNum}${CYAN}
 tomcat包内包含的本体数量: ${TAN}${tomcatAmount}${CYAN}
 tomcat运行用户: ${TAN}${tomcatUser}${CYAN}
@@ -811,7 +813,7 @@ tomcat二进制文件校验码: ${TAN}${tomcatSha}${CYAN}
     echo
 
     local tmpLimitList
-    tmpLimitList=${systemdLimitConf// /\\n}
+    tmpLimitList=$(tr ' ' '\n' <<< "${systemdLimitConf[@]}")
     echo "${CYAN}systemd 资源限制配置列表: "
     echo -e "${TAN}${tmpLimitList}${NORM}"
     echo
@@ -842,6 +844,7 @@ spec: ${TAN}${specCreate}${NORM}
         formatError "退出中"
         exit 1
     fi
+    unset offlineModeInfo
 }
 
 GenerateOptionRoute(){
