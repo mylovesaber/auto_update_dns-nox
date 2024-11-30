@@ -264,6 +264,7 @@ ParseConfig(){
     unset topdir
     unset spec_name
     unset java_home
+    unset offline_mode
     unset java_package_name
     unset systemd_limit_conf
     unset log_retention_period_type
@@ -282,10 +283,24 @@ ParseConfig(){
     [ -z "${specName}" ] ||
     [ -z "${javaHome}" ] ||
     [ -z "${offlineMode}" ] ||
-    [ "${#systemdLimitConf[@]}" -eq 0 ] ||
     [ -z "${logRetentionPeriodType}" ] ||
     [ -z "${logRetentionPeriodAmount}" ]; then
-        formatError "存在部分键值为空，请检查，退出中"
+        formatError "以下所有参数的值均禁止为空: "
+        echo -e "${RED}
+tomcat_ver
+tomcat_amount
+tomcat_tool_path
+tomcat_user
+vendor_en
+vendor_cn
+topdir
+spec_name
+java_home
+offline_mode
+log_retention_period_type
+log_retention_period_amount
+${NORM}"
+        formatError "请检查，退出中"
         exit 1
     fi
 
@@ -294,6 +309,8 @@ ParseConfig(){
         formatWarning "tomcat 用户名中包含特殊字符 '-'，在安装包构建完成时，安装包名中展示的用户名将使用下划线 '_' 代替 '-'"
         formatWarning "此内部替换仅影响到最终的安装包文件名，不影响到系统内创建的 tomcat 用户名"
         tomcatUserInPackageName=${tomcatUser//-/_}
+    else
+        tomcatUserInPackageName=${tomcatUser}
     fi
 
     # 离线模式开关
@@ -554,7 +571,8 @@ spec_name=tomcat.spec
 # java 信息
 
 ## java_home
-## java的安装路径，如果使用本配置文件的示例值，则java程序的绝对路径是: ${java_home}/bin/java
+## java环境的安装路径，如果使用本配置文件的示例值/opt/project/java-8
+## 则java程序的绝对路径是: /opt/project/java-8/bin/java
 ## 此路径必须是未来生产环境中所用的 JAVA_HOME，否则无法启动 tomcat
 java_home=/opt/project/java-8
 
